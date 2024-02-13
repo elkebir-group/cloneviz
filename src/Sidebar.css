@@ -1,0 +1,416 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    height: 100%;
+    border-right: 2px solid black;
+    z-index: 1;
+    background-color: white;
+    padding-left: 4px;
+    padding-right: 4px;
+    display: grid;
+    grid-template-rows: auto auto auto auto;
+  }
+  
+  .contents {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    max-width: 321px;
+  }
+  
+  .contents2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+  }
+  
+  .row-contents {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 50px;
+    flex: 1 1 0;
+  }
+  
+  .row-contents2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 50px;
+    flex: 1 1 0;
+  }
+  
+  .right-margin {
+    margin-right: 5px;
+  }
+  
+  .left-margin {
+    margin-left: 5px;
+  }
+  
+  input[type="file"] {
+    display: none;
+  }
+  
+  #custom-button {
+    display: none;
+    cursor: pointer;
+  }
+  
+  .custom-file-upload {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .custom-file-upload:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  .custom-file-upload2 {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .custom-file-upload2:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  
+  .custom-file-upload3 {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .custom-file-upload3:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  
+  .custom-file-upload-disabled {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    color: gray;
+  }
+  
+  .custom-file-export {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .custom-file-export:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  .demo {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .demo:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  .disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .title-bar {
+    border-top: 2px solid black;
+    margin: 3px;
+  }
+  
+  .closemenu {
+    color: #000;
+    position: absolute;
+    right: -25px;
+    z-index: 9999;
+    line-height: 20px;
+    height: 3%;
+    width: 7%;
+    font-weight: bold;
+    font-size: 22px;
+    top: 40%;
+    cursor: pointer;
+  }
+  
+  .closemenu:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  .closemenu3 {
+    color: #000;
+    position: absolute;
+    right: -25px;
+    z-index: 9999;
+    line-height: 20px;
+    height: 3%;
+    width: 7%;
+    font-weight: bold;
+    font-size: 22px;
+    top: 50%;
+    cursor: pointer;
+  }
+  
+  .closemenu2 {
+    color: #000;
+    position: absolute;
+    right: -25px;
+    z-index: 9999;
+    line-height: 20px;
+    height: 3%;
+    width: 7%;
+    font-weight: bold;
+    font-size: 22px;
+    top: 54%;
+    cursor: pointer;
+  }
+  
+  .closemenu4{
+    color: #000;
+    position: absolute;
+    right: -25px;
+    z-index: 9999;
+    line-height: 20px;
+    height: 3%;
+    width: 7%;
+    font-weight: bold;
+    font-size: 22px;
+    top: 58%;
+    cursor: pointer;
+  }
+  
+  .closemenu5{
+    color: #000;
+    position: absolute;
+    right: -25px;
+    z-index: 9999;
+    line-height: 20px;
+    height: 3%;
+    width: 7%;
+    font-weight: bold;
+    font-size: 22px;
+    top: 62%;
+    cursor: pointer;
+  }
+  
+  .clustertable {
+    height: 40%;
+  }
+  
+  #Thresh-Input {
+      height: 20px;
+      width: 100px;
+  }
+  
+  
+  .Select-Chrom:hover {
+    /* border: 2px solid #888; */
+    background-color: #ddd;
+  }
+  
+  .selection-color:hover {
+    /* border: 2px solid #888; */
+    background-color: #ddd;
+  }
+  
+  .logrdr:hover {
+    /* border: 2px solid #888; */
+    background-color: #ddd;
+  }
+  
+  .centroids:hover {
+    /* border: 1px solid #888; */
+    background-color: #ddd;
+  }
+  
+  .scatterplot:hover {
+    /* border: 2px solid #888; */
+    background-color: #ddd;
+  }
+  
+  .linearplot:hover {
+    /* border: 2px solid #888; */
+    background-color: #ddd;
+  }
+  
+  .purityploidy:hover {
+    /* border: 2px solid #888; */
+    background-color: #ddd;
+  }
+  
+  .point-slider:hover {
+    /* border: 2px solid #888; */
+    background-color: #ddd;
+  }
+  
+  .point-slider {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 50px;
+    flex: 1 1 0;
+  }
+  
+  .analytics {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .analytics:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  
+  .centroidtable {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .centroidtable:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  
+  
+  
+  .directions_label {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .directions_label:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  
+  .absorbbins {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .absorbbins:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  .clearclustering {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .clearclustering:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  .showlog {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .showlog:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  .undocluster {
+    /* display: inline-block; */
+    cursor: pointer;
+    background-image: linear-gradient(to bottom, #e4e4e4, #f7f7f7);
+    border: 2px solid #4d4949;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    /* color: disa; */
+  }
+  .undocluster:hover{
+    border: 2px solid #888;
+    background-color: #ddd;
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
