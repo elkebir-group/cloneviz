@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./Sidebar.css";
 
-const Sidebar = ({ submitFile, fileChange }) => {
+const Sidebar = ({ submitFile, fileChange, selectedFile }) => {
 
   return (
 
@@ -21,14 +21,36 @@ const Sidebar = ({ submitFile, fileChange }) => {
               <form onSubmit={submitFile}>
                 <label title="Uploads your JSON tree.">
                   <input type="file" id="fileUpload" onChange={fileChange}/>
-                    Click to Upload File
+                  {selectedFile ? (
+                    <p>Selected file: {selectedFile.name}</p>
+                  ) : (
+                    <p>Click Here to Upload File</p>
+                  )}
                 </label>
-                <button type="submit">Submit</button>
+                <button className="left-margin" type="submit">Submit</button>
               </form>
           </div>
 
           <div className='row-contents'>
-            
+            <fieldset>
+                <legend>Filter by:</legend>
+                {/* Checkbox for "Segment" */}
+                <div>
+                  <label>
+                      <input type="checkbox" name="segment" value="segment"/>
+                      Segment
+                  </label>
+                </div>
+
+                {/*  Checkbox for "SNVs" */}
+                <div>
+                  <label>
+                      <input type="checkbox" name="snvs" value="snvs"/>
+                      SNVs
+                  </label>
+                </div>
+
+            </fieldset>
           </div>
               
       </div>

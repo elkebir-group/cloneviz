@@ -86,11 +86,7 @@ const App = () => {
   return (
     <div>
       <div className="App">
-        <Sidebar submitFile={handleSubmit} fileChange={handleChange}/>
-        {/* <form onSubmit={handleSubmit}>
-          <input type='file' onChange={handleChange}/>
-          <button type='submit'>Upload</button>
-        </form> */}
+        <Sidebar submitFile={handleSubmit} fileChange={handleChange} selectedFile={file}/>
       </div>
       <div id="cy" style={{ width: '100%', height: '100vh' }} ref={cyRef}></div>
     </div>
