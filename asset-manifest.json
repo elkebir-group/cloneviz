@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/cloneviz-2/static/css/main.838849ca.css",
+    "main.js": "/cloneviz-2/static/js/main.5a1db47e.js",
+    "static/js/787.dce9307c.chunk.js": "/cloneviz-2/static/js/787.dce9307c.chunk.js",
+    "index.html": "/cloneviz-2/index.html",
+    "main.838849ca.css.map": "/cloneviz-2/static/css/main.838849ca.css.map",
+    "main.5a1db47e.js.map": "/cloneviz-2/static/js/main.5a1db47e.js.map",
+    "787.dce9307c.chunk.js.map": "/cloneviz-2/static/js/787.dce9307c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.838849ca.css",
+    "static/js/main.5a1db47e.js"
+  ]
+}
