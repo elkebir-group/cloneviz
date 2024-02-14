@@ -1,6 +1,7 @@
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Visit the deployed page [here](https://elkebir-group.github.io/cloneviz-2/).
 
 ## Available Scripts
 
