@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import "./Sidebar.css";
 
-const Sidebar = ({ submitFile, fileChange, selectedFile }) => {
+const demoFiles = []
+
+const Sidebar = ({ onsubmitSelectedFile, onSelectFile, selectedFile, demoFiles, onSelectDemoFile, onSubmitDemoForm }) => {
 
   return (
 
@@ -18,9 +20,9 @@ const Sidebar = ({ submitFile, fileChange, selectedFile }) => {
         <div className="title-bar"></div>
 
           <div className="row-contents" >
-              <form onSubmit={submitFile}>
+              <form onSubmit={onsubmitSelectedFile}>
                 <label title="Uploads your JSON tree.">
-                  <input type="file" id="fileUpload" onChange={fileChange}/>
+                  <input type="file" id="fileUpload" onChange={onSelectFile}/>
                   {selectedFile ? (
                     <p>Selected file: {selectedFile.name}</p>
                   ) : (
@@ -29,6 +31,24 @@ const Sidebar = ({ submitFile, fileChange, selectedFile }) => {
                 </label>
                 <button className="left-margin" type="submit">Submit</button>
               </form>
+          </div>
+
+          <div className='row-contents' >
+            <form onSubmit={onSubmitDemoForm}>
+              {/* Dropdown for selecting demo files */}
+              <label className="left-margin">
+                  Select Demo File:
+                  <select onChange={(e) => onSelectDemoFile(e.target.value)}>
+                    <option value="">Select a demo file</option>
+                    {demoFiles.map((demoFile) => (
+                      <option key={demoFile.id} value={demoFile.id}>
+                        {demoFile.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button className="left-margin" type="submit">Submit</button>
+            </form>
           </div>
 
           <div className='row-contents'>

@@ -3,16 +3,19 @@ import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
 import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from './Sidebar';
+import demoFile1 from './demo_json/s11_m5000_k25_l7_n1000_c0.25_e0.json';
+import demoFile2 from './demo_json/s14_m5000_k25_l7_n1000_c0.25_e0.json';
 
 cytoscape.use(dagre);
 
 const App = () => {
   const cyRef = useRef(null);
-  const [file, setFile] = useState()
+  const [file, setFile] = useState();
+  const [demoFile, setDemoFile] = useState();
 
   function updateTree(jsonFile) {
     try {
-      const jsonData = JSON.parse(jsonFile)
+      const jsonData = JSON.parse(jsonFile);
 
       const cy = cytoscape({
         container: cyRef.current,
@@ -64,29 +67,52 @@ const App = () => {
       console.error('Error loading JSON:', error);
       // Alert.alert(error);
     }
-  }
+  };
 
   function handleChange(event) {
     if (event !== undefined) {
       setFile(event.target.files[0])
     }
-  }
+  };
+
+  const demoFiles = [
+    { id: 1, name: 'Demo File 1', content: demoFile1 },
+    { id: 2, name: 'Demo File 2', content: demoFile2 },
+  ];
+
+  function handleSelectDemoFile(selectedDemoFileId) {
+    // Handle the selection of a demo file
+    const selectedDemoFile = demoFiles.find((file) => file.id === Number(selectedDemoFileId));
+    if (selectedDemoFile) {
+      setDemoFile(selectedDemoFile.content);
+    }
+  };
 
   function handleSubmit(event) {
     if (event !== undefined) {
       event.preventDefault()
       if (file !== undefined) {
         file.text().then((result) => {
+          console.log(result)
           updateTree(result);
         })
       }
     }
-  }
+  };
+
+  function handleSubmitDemoFile(event) {
+    if (event !== undefined) {
+      event.preventDefault()
+      if (demoFile !== undefined) {
+        updateTree(JSON.stringify(demoFile));
+      }
+    }
+  };
 
   return (
     <div>
       <div className="App">
-        <Sidebar submitFile={handleSubmit} fileChange={handleChange} selectedFile={file}/>
+        <Sidebar onsubmitSelectedFile={handleSubmit} onSelectFile={handleChange} selectedFile={file} demoFiles={demoFiles} onSelectDemoFile={handleSelectDemoFile} onSubmitDemoForm={handleSubmitDemoFile}/>
       </div>
       <div id="cy" style={{ width: '100%', height: '100vh' }} ref={cyRef}></div>
     </div>
