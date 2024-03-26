@@ -1,10 +1,32 @@
 import React, { useState } from 'react';
 import "./Sidebar.css";
 
-const demoFiles = []
-
 const Sidebar = ({ onsubmitSelectedFile, onSelectFile, selectedFile, demoFiles, onSelectDemoFile, onSubmitDemoForm }) => {
 
+  // const [jsonExportData, setJsonExportData] = useState(null);
+
+  // Function to handle exporting JSON
+  const handleExportJSON = () => {
+    if (selectedFile) {
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        const jsonData = event.target.result;
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = selectedFile.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
+      
+      reader.readAsText(selectedFile);
+    }
+  };
+  
   return (
 
     <div
@@ -30,6 +52,8 @@ const Sidebar = ({ onsubmitSelectedFile, onSelectFile, selectedFile, demoFiles, 
                   )}
                 </label>
                 <button className="left-margin" type="submit">Submit</button>
+                {/* Export JSON button */}
+                <button className="left-margin" onClick={handleExportJSON}>Export JSON</button>
               </form>
           </div>
 

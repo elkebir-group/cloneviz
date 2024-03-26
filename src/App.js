@@ -93,7 +93,7 @@ const App = () => {
       event.preventDefault()
       if (file !== undefined) {
         file.text().then((result) => {
-          console.log(result)
+          // console.log(result)
           updateTree(result);
         })
       }
