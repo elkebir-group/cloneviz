@@ -1,29 +1,43 @@
 import React, { useState } from 'react';
 import "./Sidebar.css";
 
-const Sidebar = ({ onsubmitSelectedFile, onSelectFile, selectedFile, demoFiles, onSelectDemoFile, onSubmitDemoForm }) => {
+const Sidebar = ({ selectedFile, handleSegmentFilterCheckboxChange, handleSelectChange, segmentFilterChecked, selectedSegment, handleSNVFilter, snvCheckboxChecked, setSNVCheckboxChecked, setSNVId, onsubmitSelectedFile, onSelectFile, demoFiles, onSelectDemoFile, onSubmitDemoForm, filteredJson }) => {
+  const [snvInput, setSNVInput] = useState('');
 
+  const handleSNVInputChange = (event) => {
+    setSNVInput(event.target.value);
+    setSNVId(event.target.value); // Update snvId state
+  }
+
+  const toggleSNVCheckbox = () => {
+    setSNVCheckboxChecked(!snvCheckboxChecked); // Toggle checkbox state
+  }
+
+  const handleFilterClick = () => {
+    handleSNVFilter(); // Call the parent component's filter function
+  }
   // const [jsonExportData, setJsonExportData] = useState(null);
 
   // Function to handle exporting JSON
   const handleExportJSON = () => {
-    if (selectedFile) {
-      const reader = new FileReader();
+    if (selectedFile && filteredJson) {
+      // Convert the JSON object to string
+      const jsonString = JSON.stringify(filteredJson, null, 2);
       
-      reader.onload = (event) => {
-        const jsonData = event.target.result;
-        const blob = new Blob([jsonData], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = selectedFile.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      };
-      
-      reader.readAsText(selectedFile);
+      // Create a Blob object with the JSON string
+      const blob = new Blob([jsonString], { type: 'application/json' });
+
+      // Create a temporary URL for the Blob object
+      const url = URL.createObjectURL(blob);
+
+      // Create a temporary anchor element
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'filtered_tree.json'; // Set the filename
+      a.click();
+
+      // Revoke the URL to release the resources
+      URL.revokeObjectURL(url);
     }
   };
   
@@ -81,19 +95,27 @@ const Sidebar = ({ onsubmitSelectedFile, onSelectFile, selectedFile, demoFiles, 
                 {/* Checkbox for "Segment" */}
                 <div>
                   <label>
-                      <input type="checkbox" name="segment" value="segment"/>
-                      Segment
-                  </label>
+                    <input type="checkbox" name="segment" value="segment" onChange={handleSegmentFilterCheckboxChange} checked={segmentFilterChecked}/>
+                    Segment
+                    </label>
+                    {/* Dropdown for segment selection */}
+                    <select value={selectedSegment} onChange={handleSelectChange}>
+                      {[...Array(50).keys()].map((segment) => (
+                        <option key={segment} value={segment}>{segment}</option>
+                      ))}
+                    </select>
                 </div>
 
-                {/*  Checkbox for "SNVs" */}
+                {/* Checkbox and input for "SNVs" */}
                 <div>
                   <label>
-                      <input type="checkbox" name="snvs" value="snvs"/>
-                      SNVs
+                    <input type="checkbox" name="snvs" value="snvs" onChange={toggleSNVCheckbox} checked={snvCheckboxChecked} />
+                    SNVs
                   </label>
+                  <input type="number" placeholder="SNV ID" value={snvInput} onChange={handleSNVInputChange} />
                 </div>
-
+              {/* Submit button */}
+              <button className="left-margin" onClick={handleFilterClick}>Filter</button>
             </fieldset>
           </div>
               
