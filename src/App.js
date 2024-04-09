@@ -35,81 +35,154 @@ const App = () => {
   };
 
 
-  const dfsPostorder = (jsonData, snvId, segmentId) => {
-      if (!jsonData || !jsonData.tree || !jsonData.tree.nodes || !jsonData.tree.edges) {
-          console.log("Invalid JSON structure.");
-          return;
+  const dfsPostorder = (jsonData, snvIds, segmentIds) => {
+    // Check if jsonData or necessary properties are not present
+    if (!jsonData || !jsonData.tree || !jsonData.tree.nodes || !jsonData.tree.edges) {
+      console.log("Invalid JSON structure.");
+      return;
+    }
+  
+    // Find the root node
+    let rootNode;
+    for (const node of jsonData.tree.nodes) {
+      if (!jsonData.tree.edges.some(edge => edge[1] === node.node_id)) {
+        rootNode = node;
+        break;
       }
-
-      // Find the root node
-      let rootNode;
-      for (const node of jsonData.tree.nodes) {
-          if (!jsonData.tree.edges.some(edge => edge[1] === node.node_id)) {
-              rootNode = node;
-              break;
-          }
+    }
+  
+    if (!rootNode) {
+      console.log("Root node not found.");
+      return;
+    }
+  
+    // Create a Map to track node differences
+    const nodeDifferences = new Map();
+  
+    // Implement the rest of the function
+    const traverse = (nodeId, parentNode, snvId, segmentId) => {
+      const node = jsonData.tree.nodes.find(node => node.node_id === nodeId);
+      if (!node) {
+        return;
       }
-
-      if (!rootNode) {
-          console.log("Root node not found.");
-          return;
+  
+      // Traverse child nodes
+      const edges = jsonData.tree.edges.filter(edge => edge[0] === nodeId);
+      for (const edge of edges) {
+        const childNodeId = edge[1];
+        traverse(childNodeId, node, snvId, segmentId); // Pass the parent node ID as an argument
       }
-
-      // Create filtered lists for nodes and edges
-      let filteredNodes = [...jsonData.tree.nodes];
-      let filteredEdges = [...jsonData.tree.edges];
-      console.log("Filtered nodes after removal:", filteredNodes);
-      const traverse = (nodeId, parentNode) => {
-          const node = filteredNodes.find(node => node.node_id === nodeId);
-          if (!node) {
-              return;
+  
+      // Process the current node
+      if (parentNode !== null) {
+        const snv = node.snvs.find(snv => snv.snv_id === snvId);
+        const parent_snv = parentNode.snvs.find(parent_snv => parent_snv.snv_id === snvId);
+        const segment = node.segments.find(segment => segment.segment_id === segmentId);
+        const parent_segment = parentNode.segments.find(parent_segment => parent_segment.segment_id === segmentId);
+        if (snv && parent_snv && segment && parent_segment) {
+          if (!(snv.x_bar === parent_snv.x_bar && snv.y_bar === parent_snv.y_bar && segment.x === parent_segment.x && segment.y === parent_segment.y)) {
+            //console.log("x_bar and y_bar are different from the parent node.");
+            nodeDifferences.set(nodeId, true); // Mark the node as different
+          } else {
+            //console.log("the same as the parent node.");
           }
+        }
+      }
+    };
 
-          // Traverse child nodes
-          const edges = filteredEdges.filter(edge => edge[0] === nodeId);
-          for (const edge of edges) {
-              const childNodeId = edge[1];
-              traverse(childNodeId, node); // Pass the parent node ID as an argument
+    // Loop through each combination of SNV IDs and segment IDs
+    for (const snvId of snvIds) {
+      for (const segmentId of segmentIds) {
+        // Traverse the tree
+        traverse(rootNode.node_id, null, snvId, segmentId);
+      }
+    }
+  
+    // // Create filtered nodes and edges based on differences map
+    // let filteredNodes = jsonData.tree.nodes.filter(node => !nodeDifferences.has(node.node_id));
+    // let filteredEdges = jsonData.tree.edges.filter(edge => {
+    //   // Check if both source and target nodes are not marked as different
+    //   return !nodeDifferences.has(edge[0]) && !nodeDifferences.has(edge[1]);
+    // });
+    // Create filtered lists for nodes and edges
+    let filteredNodes = [...jsonData.tree.nodes];
+    let filteredEdges = [...jsonData.tree.edges];
+
+    // DFS from children of nodes marked as different
+    const dfsFromChildren = (nodeId, parentNode) => {
+      const node = jsonData.tree.nodes.find(node => node.node_id === nodeId);
+      if (!node) {
+        return;
+      }
+  
+      // Traverse child nodes
+      const edges = jsonData.tree.edges.filter(edge => edge[0] === nodeId);
+      for (const edge of edges) {
+        const childNodeId = edge[1];
+        dfsFromChildren(childNodeId, node); // Pass the parent node ID as an argument
+      }
+  
+      // Process the current node
+      if (parentNode !== null) {
+        if (!nodeDifferences.get(nodeId)) {
+          console.log("the same as the parent node.");
+      
+          // Check if the node has any children
+          const childrenEdges = filteredEdges.filter(edge => edge[0] === node.node_id);
+          for (const childEdge of childrenEdges) {
+              // Add edges between parent node and children
+              filteredEdges.push([parentNode.node_id, childEdge[1]]);
           }
+      
+          // Remove the node from filteredNodes list
+          filteredNodes = filteredNodes.filter(n => n.node_id !== node.node_id);
+          console.log("Filtered nodes after removal:", filteredNodes);
+      
+          // Remove edges from filteredEdges that have the node as a child
+          filteredEdges = filteredEdges.filter(edge => edge[1] !== node.node_id && edge[0] !== node.node_id);
+          console.log("Filtered edges after removal:", filteredEdges);
+        } else {
+          console.log("x_bar and y_bar are different from the parent node.");
+        }
+        console.log("Filtered edges after removal:", filteredEdges);
+      }
+    };
+    // const visited = new Set();
+    // const dfsFromChildren = (nodeId) => {
+    //   visited.add(nodeId);
+    //   const childrenEdges = jsonData.tree.edges.filter(edge => edge[0] === nodeId);
+    //   for (const childEdge of childrenEdges) {
+    //     const childNodeId = childEdge[1];
+    //     if (!visited.has(childNodeId) && nodeDifferences.has(childNodeId)) {
+    //       // Remove the node from filteredNodes list
+    //       filteredNodes = filteredNodes.filter(n => n.node_id !== childNodeId);
+    //       console.log("Filtered nodes after removal:", filteredNodes);
+          
+    //       // Remove edges from filteredEdges that have the node as a child
+    //       filteredEdges = filteredEdges.filter(edge => edge[1] !== childNodeId && edge[0] !== childNodeId);
+    //       console.log("Filtered edges after removal:", filteredEdges);
 
-          // Process the current node
-          console.log("Processing node:", nodeId);
-          if (parentNode !== null) {
-              const snv = node.snvs.find(snv => snv.snv_id === parseInt(snvId));
-              const parent_snv = parentNode.snvs.find(parent_snv => parent_snv.snv_id === parseInt(snvId));
-              const segment = node.segments.find(segment => segment.segment_id === parseInt(segmentId));
-              const parent_segment = parentNode.segments.find(parent_segment => parent_segment.segment_id === parseInt(segmentId));
-              if (snv && parent_snv && segment && parent_segment) {
-                if (snv.x_bar === parent_snv.x_bar && snv.y_bar === parent_snv.y_bar && segment.x === parent_segment.x && segment.y === parent_segment.y) {
-                  console.log("the same as the parent node.");
-              
-                  // Check if the node has any children
-                  const childrenEdges = filteredEdges.filter(edge => edge[0] === node.node_id);
-                  for (const childEdge of childrenEdges) {
-                      // Add edges between parent node and children
-                      filteredEdges.push([parentNode.node_id, childEdge[1]]);
-                  }
-              
-                  // Remove the node from filteredNodes list
-                  filteredNodes = filteredNodes.filter(n => n.node_id !== node.node_id);
-                  console.log("Filtered nodes after removal:", filteredNodes);
-              
-                  // Remove edges from filteredEdges that have the node as a child
-                  filteredEdges = filteredEdges.filter(edge => edge[1] !== node.node_id && edge[0] !== node.node_id);
-                  console.log("Filtered edges after removal:", filteredEdges);
-                } else {
-                      console.log("x_bar and y_bar are different from the parent node.");
-                }
-              }
-              console.log("Filtered edges after removal:", filteredEdges);
-          }
-      };
+    //       // Traverse further if needed
+    //       dfsFromChildren(childNodeId);
+    //     }
+    //   }
+    // };
 
-      // Start traversal from the root node
-      traverse(rootNode.node_id, null);
-      filterBySNV(filteredNodes, filteredEdges);
-      filterJson(filteredNodes, filteredEdges);
+    // for (const [nodeId, isDifferent] of nodeDifferences.entries()) {
+    //   if (isDifferent && !visited.has(nodeId)) {
+    //     dfsFromChildren(nodeId);
+    //   }
+    // }
+
+    dfsFromChildren(rootNode.node_id, null);
+    //dfsFromChildren(rootNode.node_id);
+    // Print or return filteredNodes and filteredEdges as needed
+    console.log("Filtered nodes after removal:", filteredNodes);
+    console.log("Filtered edges after removal:", filteredEdges);
+    filterBySNV(filteredNodes, filteredEdges);
+    filterJson(filteredNodes, filteredEdges);
   };
+
 
   
 
@@ -275,15 +348,20 @@ const App = () => {
 
 
   // Define the handleSNVFilter function
-  const handleSNVFilter = () => {
+  const handleSNVFilter = (snvIds) => {
     // Print the SNV ID inputted by the user
-    console.log("SNV ID:", snvId);
+    console.log("SNV ID:", snvCheckboxChecked);
+    if (snvCheckboxChecked) {
+      // Call the helper function to find the segment for the SNV ID
+      const segmentIds = []; // Initialize an empty array to store segment IDs
+      for (const snvId of snvIds) {
+        const segmentId = findSegmentForSNV(snvId); // Pass jsonData here
+        segmentIds.push(segmentId); // Push segmentId to the array
+      }
 
-    // Call the helper function to find the segment for the SNV ID
-    const segmentId = findSegmentForSNV(snvId); // Pass jsonData here
-
-    // Call the DFS postorder traversal passing jsonData
-    dfsPostorder(jsonData, snvId, segmentId);
+      // Call the DFS postorder traversal passing jsonData
+      dfsPostorder(jsonData, snvIds, segmentIds);
+    }
   };
 
   const demoFiles = [
