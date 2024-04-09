@@ -12,11 +12,12 @@ const App = () => {
   const cyRef = useRef(null);
   const [demoFile, setDemoFile] = useState();
   const [jsonData, setJsonData] = useState(null); // Initialize jsonData as null
+  const [filteredJsonData, setFilteredJsonData] = useState(null); // Initialize jsonData as null
   const [file, setFile] = useState();
   const [snvCheckboxChecked, setSNVCheckboxChecked] = useState(false);
   const [snvId, setSNVId] = useState('');
 
-  let filteredJsonData = null;
+  //let filteredJsonData = null;
   // Helper function to find the segment for a given SNV ID
   const findSegmentForSNV = (snvId) => {
       if (jsonData !== null) {
@@ -112,32 +113,32 @@ const App = () => {
 
   
 
-    const filterJson = (filteredNodes, filteredEdges) => {
-      try {
-        const { tree } = jsonData;
+  const filterJson = (filteredNodes, filteredEdges) => {
+    try {
+      const { tree } = jsonData;
 
-        // Remove nodes that are not present in the filteredNodes list
-        const filteredTreeNodes = tree.nodes.filter(node => filteredNodes.some(filteredNode => filteredNode.node_id === node.node_id));
+      // Remove nodes that are not present in the filteredNodes list
+      const filteredTreeNodes = tree.nodes.filter(node => filteredNodes.some(filteredNode => filteredNode.node_id === node.node_id));
 
-        // Replace edges with the filteredEdges list
-        const filteredTreeEdges = filteredEdges;
+      // Replace edges with the filteredEdges list
+      const filteredTreeEdges = filteredEdges;
 
-        // Create a new JSON object with filtered nodes and edges
-        filteredJsonData = {
-          ...jsonData,
-          tree: {
-            ...tree,
-            nodes: filteredTreeNodes,
-            edges: filteredTreeEdges
-          }
-        };
-
-        return filteredJsonData;
-      } catch (error) {
-        console.error('Error creating JSON:', error);
-        return null;
-      }
-    };
+      // Create a new JSON object with filtered nodes and edges
+      const filteredJsonData = {
+        ...jsonData,
+        tree: {
+          ...tree,
+          nodes: filteredTreeNodes,
+          edges: filteredTreeEdges
+        }
+      };
+      setFilteredJsonData(filteredJsonData);
+      //return filteredJsonData;
+    } catch (error) {
+      console.error('Error creating JSON:', error);
+      return null;
+    }
+  };
   function filterBySNV(nodes, edges) {
       try {
           const elements = {
@@ -298,18 +299,6 @@ const App = () => {
     }
   };
 
-  // function handleSubmit(event) {
-  //   if (event !== undefined) {
-  //     event.preventDefault()
-  //     if (file !== undefined) {
-  //       file.text().then((result) => {
-  //         // console.log(result)
-  //         updateTree(result);
-  //       })
-  //     }
-  //   }
-  // };
-
   function handleSubmitDemoFile(event) {
     if (event !== undefined) {
       event.preventDefault()
@@ -334,7 +323,7 @@ const App = () => {
         setSNVCheckboxChecked={setSNVCheckboxChecked} // Pass the setter function
         snvId={snvId} // Pass the SNV ID
         setSNVId={setSNVId} // Pass the setter function
-        filteredJson={filteredJsonData}
+        filteredJsonData={filteredJsonData}
         />
       </div>
       <div id="cy" style={{ width: '100%', height: '100vh' }} ref={cyRef}></div>

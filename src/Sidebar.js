@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import "./Sidebar.css";
 
-const Sidebar = ({ selectedFile, handleSegmentFilterCheckboxChange, handleSelectChange, segmentFilterChecked, selectedSegment, handleSNVFilter, snvCheckboxChecked, setSNVCheckboxChecked, setSNVId, onsubmitSelectedFile, onSelectFile, demoFiles, onSelectDemoFile, onSubmitDemoForm, filteredJson }) => {
+const Sidebar = ({ selectedFile, handleSegmentFilterCheckboxChange, handleSelectChange, segmentFilterChecked, selectedSegment, handleSNVFilter, snvCheckboxChecked, setSNVCheckboxChecked, setSNVId, onsubmitSelectedFile, onSelectFile, demoFiles, onSelectDemoFile, onSubmitDemoForm, filteredJsonData }) => {
   const [snvInput, setSNVInput] = useState('');
 
   const handleSNVInputChange = (event) => {
@@ -20,26 +20,40 @@ const Sidebar = ({ selectedFile, handleSegmentFilterCheckboxChange, handleSelect
 
   // Function to handle exporting JSON
   const handleExportJSON = () => {
-    if (selectedFile && filteredJson) {
-      // Convert the JSON object to string
-      const jsonString = JSON.stringify(filteredJson, null, 2);
-      
+    if (selectedFile && filteredJsonData) {
+      // Convert JSON data to string
+      const jsonString = JSON.stringify(filteredJsonData);
+  
       // Create a Blob object with the JSON string
       const blob = new Blob([jsonString], { type: 'application/json' });
-
-      // Create a temporary URL for the Blob object
-      const url = URL.createObjectURL(blob);
-
-      // Create a temporary anchor element
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'filtered_tree.json'; // Set the filename
-      a.click();
-
-      // Revoke the URL to release the resources
-      URL.revokeObjectURL(url);
+  
+      // Create a FileReader
+      const reader = new FileReader();
+  
+      // Define onload event handler
+      reader.onload = (event) => {
+        // Once loaded, create a temporary URL for the Blob object
+        const url = URL.createObjectURL(blob);
+  
+        // Create a temporary anchor element
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = selectedFile.name; // Set the filename
+        document.body.appendChild(a);
+  
+        // Trigger a click event on the anchor element to start downloading
+        a.click();
+  
+        // Cleanup: remove the anchor element and revoke the URL
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
+  
+      // Read the Blob object as text
+      reader.readAsText(blob);
     }
   };
+  
   
   return (
 
