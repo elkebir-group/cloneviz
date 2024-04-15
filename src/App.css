@@ -27,6 +27,19 @@
 .App-link {
   color: #61dafb;
 }
+ 
+.full_container {
+  width: 100vw;
+  height: 100vh;
+}
+
+.viz_container {
+  margin-bottom: 30%;
+}
+
+.bar-chart-container {
+  margin-left: 35%;
+}
 
 @keyframes App-logo-spin {
   from {

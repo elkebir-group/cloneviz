@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
 import Sidebar from './components/Sidebar';
@@ -6,11 +7,27 @@ import demoFile1 from './demo_json/s11_m5000_k25_l7_n1000_c0.25_e0.json';
 import demoFile2 from './demo_json/s14_m5000_k25_l7_n1000_c0.25_e0.json';
 import 'cytoscape-qtip';
 import BarChart from './components/BarChart';
+import popper from 'cytoscape-popper';
+
+import { Button } from 'semantic-ui-react';
 
 cytoscape.use(dagre);
+cytoscape.use(popper);
+
+const ReactButton = () => {
+  return <Button type="button">React Button</Button>;
+};
+
+const createContentFromComponent = (component) => {
+  const dummyDomEle = document.createElement('div');
+  ReactDOM.render(component, dummyDomEle);
+  document.body.appendChild(dummyDomEle);
+  return dummyDomEle;
+};
 
 const App = () => {
   const cyRef = useRef(null);
+  const cyPopperRef = useRef(null);
   const [file, setFile] = useState();
   const [demoFile, setDemoFile] = useState();
   const [segmentData, setSegmentData] = useState({});
@@ -98,23 +115,9 @@ const App = () => {
   
       cy.layout({ name: 'dagre' }).run();
 
-      // Add tooltip on node hover
-      // cy.nodes().qtip({
-      //   content: function () {
-      //     return this.data('id'); // Displaying node ID as tooltip content, replace with desired content
-      //   },
-      //   position: {
-      //     my: 'bottom center',
-      //     at: 'top center',
-      //   },
-      //   style: {
-      //     classes: 'qtip-bootstrap',
-      //     tip: {
-      //       width: 16,
-      //       height: 8,
-      //     },
-      //   },
-      // });
+      cy.nodes().on('mouseover', (event) => {
+        console.log("HOVERING!");
+      });
   
     } catch (error) {
       console.error('Error loading JSON:', error);
@@ -164,17 +167,19 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className='full_container'>
       <div className="App">
         <Sidebar onsubmitSelectedFile={handleSubmit} onSelectFile={handleChange} selectedFile={file} demoFiles={demoFiles} onSelectDemoFile={handleSelectDemoFile} onSubmitDemoForm={handleSubmitDemoFile}/>
       </div>
 
-      <div id="cy" style={{ width: '100%', height: '75vh' }} ref={cyRef}></div>
+      <div>
+        <div id="cy" style={{ height: '70vh', marginLeft: '30%' }} ref={cyRef}></div>
 
-      <div style={{ width: '55%', height: '50%', position: 'fixed', bottom: 0, right: 0 }}>
-        <BarChart data={segmentData} />
+        <div style={{ marginLeft: '40%' }} >
+          <BarChart data={segmentData}/>
+        </div>
       </div>
-      
+
     </div>
   );
 };

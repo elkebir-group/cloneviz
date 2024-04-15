@@ -11,8 +11,8 @@ const BarChart = ({ data }) => {
     d3.select(chartRef.current).selectAll("*").remove();
 
     const margin = { top: 20, right: 30, bottom: 50, left: 50 };
-    const width = 800 - margin.left - margin.right; // Fixed width
-    const height = 300 - margin.top - margin.bottom; // Fixed height
+    const width = 600 - margin.left - margin.right; // Fixed width
+    const height = 200 - margin.top - margin.bottom; // Fixed height
 
     const svg = d3.select(chartRef.current)
       .append("svg")
@@ -66,7 +66,7 @@ const BarChart = ({ data }) => {
         .text("SNV Count");
 
     // Render bars
-    svg.selectAll(".bar")
+    const bars = svg.selectAll(".bar")
       .data(Object.entries(data))
       .enter().append("rect")
       .attr("class", "bar")
@@ -75,6 +75,20 @@ const BarChart = ({ data }) => {
       .attr("y", d => y(Math.max(0, d[1])))
       .attr("height", d => Math.abs(y(0) - y(d[1])))
       .attr("fill", "steelblue");
+
+    // Add tooltips
+    bars.on("mouseover", (event, d) => {
+      const tooltip = svg.append("text")
+        .attr("class", "tooltip")
+        .attr("x", x(d[0]) + x.bandwidth() / 2)
+        .attr("y", y(d[1]) - 5)
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .text(d[1]);
+    })
+    .on("mouseout", () => {
+      svg.select(".tooltip").remove();
+    });
 
     return () => {
       // Clean up when component unmounts
