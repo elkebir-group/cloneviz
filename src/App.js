@@ -1,21 +1,138 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
-import 'react-toastify/dist/ReactToastify.css';
-import Sidebar from './Sidebar';
+import Sidebar from './components/Sidebar';
 import demoFile1 from './demo_json/s11_m5000_k25_l7_n1000_c0.25_e0.json';
 import demoFile2 from './demo_json/s14_m5000_k25_l7_n1000_c0.25_e0.json';
+import BarChart from './components/BarChart';
 
 cytoscape.use(dagre);
 
 const App = () => {
   const cyRef = useRef(null);
+  const [file, setFile] = useState();
   const [demoFile, setDemoFile] = useState();
+  const [segmentData, setSegmentData] = useState({});
+  const [countSNVData, setCountSNVData] = useState({});
+  const [isDemo, setIsDemo] = useState(false);
   const [jsonData, setJsonData] = useState(null); // Initialize jsonData as null
   const [filteredJsonData, setFilteredJsonData] = useState(null); // Initialize jsonData as null
-  const [file, setFile] = useState();
   const [snvCheckboxChecked, setSNVCheckboxChecked] = useState(false);
   const [snvId, setSNVId] = useState('');
+
+  useEffect(() => {
+    // Function to update the tree with countSNVData
+    const updateTreeWithSNVData = (jsonFile) => {
+      updateTree(jsonFile);
+    };
+
+    // Call updateTree only when countSNVData is updated
+    if (isDemo) {
+      if (demoFile) {
+        updateTreeWithSNVData(JSON.stringify(demoFile));
+      }
+    } else {
+      if (file) {
+        file.text().then((result) => {
+          updateTreeWithSNVData(result);
+        });
+      }
+    }
+    
+  }, [countSNVData]);
+
+  function calculateSNVsGainedLost(jsonFile) {
+    try {
+      const jsonData = JSON.parse(jsonFile);
+      // Reset countSNVData to an empty object
+      setCountSNVData({});
+
+      let snvCounts = {}; // Object to store SNV counts per node
+    
+      // Iterate over each edge in the tree
+      jsonData.tree.edges.forEach(edge => {
+        const parent_id = edge[0];
+        const child_id = edge[1];
+        
+        // Set the default SNV counts
+        if (!snvCounts.hasOwnProperty(parent_id)) {
+          snvCounts[parent_id] = { "snvs_gained": 0, "snvs_lost": 0 };
+        }
+        if (!snvCounts.hasOwnProperty(child_id)) {
+          snvCounts[child_id] = { "snvs_gained": 0, "snvs_lost": 0 };
+        }
+
+        // Find the corresponding parent SNV list and child SNV list
+        let parent_snvs = [];
+        let child_snvs = [];
+        jsonData.tree.nodes.forEach(node => {
+          const node_id = node.node_id;
+          if (node_id === parent_id) {
+            parent_snvs = node.snvs;
+          }
+          if (node_id === child_id) {
+            child_snvs = node.snvs;
+          }
+        });
+
+        // Sort the lists in ascending order of "snv_id"
+        parent_snvs.sort((a, b) => a.snv_id - b.snv_id);
+        child_snvs.sort((a, b) => a.snv_id - b.snv_id);
+        
+        // Iterate through the snv lists and calculate the deltas across
+        for (let i = 0; i < parent_snvs.length; i++) {
+          const delta_x = child_snvs[i]["x_bar"] - parent_snvs[i]["x_bar"];
+          const delta_y = child_snvs[i]["y_bar"] - parent_snvs[i]["y_bar"];
+          if (delta_x > 0) {
+            snvCounts[child_id]["snvs_gained"] += delta_x;
+          }
+          if (delta_x < 0) {
+            snvCounts[child_id]["snvs_lost"] += (-1 * delta_x);
+          }
+          if (delta_y > 0) {
+            snvCounts[child_id]["snvs_gained"] += delta_y;
+          }
+          if (delta_y < 0) {
+            snvCounts[child_id]["snvs_lost"] += (-1 * delta_y);
+          }
+        }
+
+      });
+    
+      console.log(snvCounts);
+      setCountSNVData(snvCounts); // Update segmentData state
+
+    } catch (error) {
+      console.error('Error loading JSON:', error);
+    }
+  }
+
+  function countSNVsPerSegment(jsonFile) {
+    try {
+      const jsonData = JSON.parse(jsonFile);
+
+      // Reset segmentData to an empty object
+      setSegmentData({});
+      
+      const snvs = jsonData.snvs;
+
+      const updatedSegmentData = {}; // Initialize updatedSegmentData
+
+      snvs.forEach(snv => {
+        const segmentId = snv.segment_id;
+        if (updatedSegmentData[segmentId]) {
+          updatedSegmentData[segmentId]++;
+        } else {
+          updatedSegmentData[segmentId] = 1;
+        }
+      });
+
+      setSegmentData(updatedSegmentData); // Update segmentData state
+
+    } catch (error) {
+      console.error('Error loading JSON:', error);
+    }
+  }
 
   //let filteredJsonData = null;
   // Helper function to find the segment for a given SNV ID
@@ -183,11 +300,9 @@ const App = () => {
     filterJson(filteredNodes, filteredEdges);
   };
 
-
-  
-
   const filterJson = (filteredNodes, filteredEdges) => {
     try {
+      const jsonData = JSON.parse(jsonFile);
       const { tree } = jsonData;
 
       // Remove nodes that are not present in the filteredNodes list
@@ -281,7 +396,7 @@ const App = () => {
           nodes: jsonData.tree.nodes.map((node) => ({
             data: {
               id: node.node_id.toString(),
-              label: node.node_id.toString(),
+              label: getNodeLabel(node),
             },
             position: { x: node.segments[0].x, y: node.segments[0].y },
           })),
@@ -302,9 +417,11 @@ const App = () => {
               shape: 'ellipse',
               width: 'label',
               height: 'label',
-              padding: '10px',
+              padding: '40px',
               'background-color': '#3498db',
               color: '#ffffff',
+              'min-width': '120px', // Set minimum width
+              'min-height': '50px', // Set minimum height
             },
           },
           {
@@ -321,12 +438,27 @@ const App = () => {
           name: 'dagre',
         },
       });
-
+  
       cy.layout({ name: 'dagre' }).run();
+  
+      cy.nodes().forEach(node => {
+        node.data('label', getNodeLabel(jsonData.tree.nodes.find(n => n.node_id.toString() === node.id())));
+      });
+  
     } catch (error) {
       console.error('Error loading JSON:', error);
     }
-  }
+  };
+  
+  function getNodeLabel(node) {
+    const nodeData = countSNVData[node.node_id];
+    if (nodeData) {
+      return `SNVs Gained: ${nodeData.snvs_gained} SNVs Lost: ${nodeData.snvs_lost}`;
+    } else {
+      return `Node ID: ${node.node_id}`;
+    }
+  }  
+  
 
   function handleChange(event) {
     if (event !== undefined) {
@@ -377,18 +509,34 @@ const App = () => {
     }
   };
 
+  function handleSubmit(event) {
+    if (event !== undefined) {
+      event.preventDefault()
+      if (file !== undefined) {
+        file.text().then((result) => {
+          calculateSNVsGainedLost(result);
+          countSNVsPerSegment(result);
+          setIsDemo(false);
+          // updateTree(result);
+        })
+      }
+    }
+  };
+
   function handleSubmitDemoFile(event) {
     if (event !== undefined) {
       event.preventDefault()
       if (demoFile !== undefined) {
-        const jsonData = JSON.parse(JSON.stringify(demoFile)); // Parse the result
-        updateTree(jsonData);
+        calculateSNVsGainedLost(JSON.stringify(demoFile));
+        countSNVsPerSegment(JSON.stringify(demoFile));
+        setIsDemo(true);
+        // updateTree(JSON.stringify(demoFile));
       }
     }
   };
 
   return (
-    <div>
+    <div className='full_container'>
       <div className="App">
         <Sidebar onsubmitSelectedFile={handleSubmit} 
         onSelectFile={handleChange} 
@@ -404,7 +552,15 @@ const App = () => {
         filteredJsonData={filteredJsonData}
         />
       </div>
-      <div id="cy" style={{ width: '100%', height: '100vh' }} ref={cyRef}></div>
+
+      <div>
+        <div id="cy" style={{ height: '70vh', marginLeft: '30%' }} ref={cyRef}></div>
+
+        <div style={{ marginLeft: '40%' }} >
+          <BarChart data={segmentData}/>
+        </div>
+      </div>
+
     </div>
   );
 };
