@@ -302,7 +302,7 @@ const App = () => {
 
   const filterJson = (filteredNodes, filteredEdges) => {
     try {
-      const jsonData = JSON.parse(jsonFile);
+      // const jsonData = JSON.parse(jsonFile);
       const { tree } = jsonData;
 
       // Remove nodes that are not present in the filteredNodes list
@@ -384,10 +384,9 @@ const App = () => {
       }
   }
 
-
-
-  function updateTree(jsonData) {
+  function updateTree(jsonFile) {
     try {
+      const jsonData = JSON.parse(jsonFile);
       setJsonData(jsonData); // Set the parsed JSON data to the state
 
       const cy = cytoscape({
@@ -453,7 +452,7 @@ const App = () => {
   function getNodeLabel(node) {
     const nodeData = countSNVData[node.node_id];
     if (nodeData) {
-      return `SNVs Gained: ${nodeData.snvs_gained} SNVs Lost: ${nodeData.snvs_lost}`;
+      return `SNVs Gained: ${nodeData.snvs_gained}, SNVs Lost: ${nodeData.snvs_lost}`;
     } else {
       return `Node ID: ${node.node_id}`;
     }
@@ -465,19 +464,6 @@ const App = () => {
       setFile(event.target.files[0]);
     }
   }
-
-  function handleSubmit(event) {
-    if (event !== undefined) {
-      event.preventDefault();
-      if (file !== undefined) {
-        file.text().then((result) => {
-          const jsonData = JSON.parse(result); // Parse the result
-          updateTree(jsonData); // Pass jsonData to updateTree function
-        });
-      }
-    }
-  }
-
 
   // Define the handleSNVFilter function
   const handleSNVFilter = (snvIds) => {
