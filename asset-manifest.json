@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/cloneviz-2/static/css/main.c765cb73.css",
-    "main.js": "/cloneviz-2/static/js/main.4ff07127.js",
+    "main.js": "/cloneviz-2/static/js/main.2a121d4f.js",
     "static/js/453.9f2d4352.chunk.js": "/cloneviz-2/static/js/453.9f2d4352.chunk.js",
     "index.html": "/cloneviz-2/index.html",
     "main.c765cb73.css.map": "/cloneviz-2/static/css/main.c765cb73.css.map",
-    "main.4ff07127.js.map": "/cloneviz-2/static/js/main.4ff07127.js.map",
+    "main.2a121d4f.js.map": "/cloneviz-2/static/js/main.2a121d4f.js.map",
     "453.9f2d4352.chunk.js.map": "/cloneviz-2/static/js/453.9f2d4352.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c765cb73.css",
-    "static/js/main.4ff07127.js"
+    "static/js/main.2a121d4f.js"
   ]
 }
