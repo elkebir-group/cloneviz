@@ -83,16 +83,16 @@ const App = () => {
         for (let i = 0; i < parent_snvs.length; i++) {
           const delta_x = child_snvs[i]["x_bar"] - parent_snvs[i]["x_bar"];
           const delta_y = child_snvs[i]["y_bar"] - parent_snvs[i]["y_bar"];
-          if (delta_x > 0) {
+          if (parent_snvs[i]["x_bar"] === 0 && delta_x > 0) {
             snvCounts[child_id]["snvs_gained"] += delta_x;
           }
-          if (delta_x < 0) {
+          if (child_snvs[i]["x_bar"] === 0 && delta_x < 0) {
             snvCounts[child_id]["snvs_lost"] += (-1 * delta_x);
           }
-          if (delta_y > 0) {
+          if (parent_snvs[i]["y_bar"] === 0 && delta_y > 0) {
             snvCounts[child_id]["snvs_gained"] += delta_y;
           }
-          if (delta_y < 0) {
+          if (child_snvs[i]["y_bar"] === 0 && delta_y < 0) {
             snvCounts[child_id]["snvs_lost"] += (-1 * delta_y);
           }
         }
@@ -452,7 +452,7 @@ const App = () => {
   function getNodeLabel(node) {
     const nodeData = countSNVData[node.node_id];
     if (nodeData) {
-      return `SNVs Gained: ${nodeData.snvs_gained}, SNVs Lost: ${nodeData.snvs_lost}`;
+      return `+${nodeData.snvs_gained}, -${nodeData.snvs_lost}`;
     } else {
       return `Node ID: ${node.node_id}`;
     }
